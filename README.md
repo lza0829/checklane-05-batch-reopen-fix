@@ -32,6 +32,22 @@ cd frontend && npm install && npm run dev
 
 登记数据集与规则 → 装载夹具批次入检 → 按规则裁决放行/隔离 → 签发到精选区 → 批次报告与各列表数字同源
 
+## 批次重开修复（batch_reopen_fix）
+
+已签发批次可打回重开，口径如下：
+
+- **仅 `released`（已签发）/ `completed`（已完成）批次允许重开**；未签发批次（`inspected` 等）重开返回 409。
+- 重开后原批次进入 `reopened`（可修复态）：该批写入精选区的行 **标记失效**（`curated.active=0`，保留撤回原因与时间，不物理删除），隔离区行同步失效；重开原因、精选区撤回条数、隔离区失效条数写入 `batch_reopen_events` 审计表。
+- 再入检采用 **新批次新一轮** 口径：生成新批次（`round_no` 递增、`reopened_from_id` 指回上一轮），结果独立可核对；精选区存量只统计 `active=1`，已撤回行不会假装仍在精选区。
+- 各列表数字同源：精选区/隔离区计数与列表均按 active 口径；批次报告含 `reopen_round_curated_traceable` 互证校验。
+
+| 接口 | 方法 | 说明 |
+| --- | --- | --- |
+| `/api/batches/{id}/reopen` | POST | 重开已签发批次，body `{"reason": "..."}` |
+| `/api/inspect/reopen-round` | POST | 对 reopened 批次再入检，body `{"dataset_id":1,"reopen_from_batch_id":2}` |
+| `/api/curated/withdrawn` | GET | 重开撤回审计（失效精选行） |
+| `/api/reopen-events` | GET | 重开事件列表（原因/撤回条数/新批次） |
+
 ## 种子说明
 
 - **Orders Snapshot**：JSONL 商品快照，含必填缺失与类型错误行，用于演示入检与隔离。
@@ -45,4 +61,4 @@ Python 3.12 + FastAPI + SQLite；Vue 3 + Vite + Nginx。
 
 ## 0-1 切口（未实现，见题单）
 
-当前仓库已实现「单批入检 + 基础规则 + 放行签发」主链。严重度整批阻断、规则包版本、抽样入检、跨字段规则、批次重开、金标对照、批内重复键、放行冻结窗、规则临时豁免、跨数据集参照检查等均在 ackend/app/modules/* 留空包，按题单逐题换主链路实现。
+当前仓库已实现「单批入检 + 基础规则 + 放行签发」主链与「批次重开修复」（签发 → 重开撤回 → 再入检）。严重度整批阻断、规则包版本、抽样入检、跨字段规则、金标对照、批内重复键、放行冻结窗、规则临时豁免、跨数据集参照检查等仍在 app/modules/* 其余空包中，按题单逐题换主链路实现。
