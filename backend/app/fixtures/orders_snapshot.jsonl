@@ -1,0 +1,6 @@
+{"entity_key":"ORD-1","sku":"SKU-A","price":12.5,"qty":2,"title":"Alpha"}
+{"entity_key":"ORD-2","sku":"SKU-B","price":9.0,"qty":1,"title":"Beta"}
+{"entity_key":"ORD-3","sku":"","price":8.0,"qty":3,"title":"缺 sku"}
+{"entity_key":"ORD-4","sku":"SKU-C","price":"NaN","qty":1,"title":"价格非数字"}
+{"entity_key":"ORD-5","sku":"SKU-D","price":4.5,"qty":1.5,"title":"数量非整数"}
+{"entity_key":"ORD-6","sku":"SKU-E","price":20,"qty":4,"title":"Clean"}

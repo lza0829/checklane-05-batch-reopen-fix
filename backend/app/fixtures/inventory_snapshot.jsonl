@@ -1,0 +1,4 @@
+{"entity_key":"INV-1","sku":"SKU-A","on_hand":10,"warehouse":"WH-1"}
+{"entity_key":"INV-2","sku":"SKU-B","on_hand":3,"warehouse":"WH-1"}
+{"entity_key":"INV-3","sku":"","on_hand":5,"warehouse":"WH-2"}
+{"entity_key":"INV-4","sku":"SKU-C","on_hand":"plenty","warehouse":"WH-2"}
